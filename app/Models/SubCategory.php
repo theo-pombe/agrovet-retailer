@@ -4,22 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
+class SubCategory extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "categories";
+    protected $table = 'sub_categories';
 
     protected $fillable = [
+        'category_id',
         'name',
-        "description"
+        'description',
     ];
 
-    public function subcategories()
+    public function category(): BelongsTo
     {
-        return $this->hasMany(SubCategory::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function getFormattedNameAttribute(): string
@@ -32,11 +34,16 @@ class Category extends Model
         return $this->description ? ucfirst($this->description) : null;
     }
 
-    public static function selectCategories(): array
+    public static function selectSubCategories($categoryId = null): array
     {
-        $data = ['' => 'Select category'];
+        $data = ['' => 'Select subcategory'];
 
-        self::query()->orderBy('name')->get()->each(function ($item) use (&$data) {
+        $query = self::query()->orderBy('name');
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $query->get()->each(function ($item) use (&$data) {
             $data[$item->id] = $item->formatted_name;
         });
 
