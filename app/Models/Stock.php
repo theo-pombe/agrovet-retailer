@@ -27,6 +27,11 @@ class Stock extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(StockTransaction::class);
+    }
+
     public function isBelowReorderLevel(): bool
     {
         return $this->stock_level <= $this->re_order_level;

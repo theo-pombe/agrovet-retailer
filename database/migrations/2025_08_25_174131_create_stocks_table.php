@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('product_id')->unique()->constrained('products');
             $table->integer('stock_level')->default(0);
             $table->integer('re_order_level')->default(0);
-            $table->enum('status', Status::generalStatuses())->default(Status::ACTIVE->value);
+            $table->enum('status', array_map(fn($s) => $s->value, Status::generalStatuses()))
+                ->default(Status::ACTIVE->value);
             $table->timestamps();
             $table->softDeletes();
         });
