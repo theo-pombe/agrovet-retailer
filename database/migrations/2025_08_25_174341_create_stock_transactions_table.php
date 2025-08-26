@@ -31,6 +31,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->nullable()->constrained('customers');
 
             // General
+            $table->morphs('transactionable');
             $table->date('transacted_date')->useCurrent();
             $table->enum('status', array_map(fn($s) => $s->value, Status::generalStatuses()))
                 ->default(Status::ACTIVE->value);

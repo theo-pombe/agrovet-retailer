@@ -20,6 +20,8 @@ class StockTransaction extends Model
         'supplier_id',
         'retail_price',
         'customer_id',
+        'transactionable_type',
+        'transactionable_id',
         'transacted_date',
         'status',
     ];
@@ -43,5 +45,10 @@ class StockTransaction extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function transactionable()
+    {
+        return $this->morphTo();
     }
 }
