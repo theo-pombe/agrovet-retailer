@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\PurchaseSalePaymentStatus;
 use App\Enums\PurchaseSaleStatus;
+use App\Enums\TransactionType;
 use Carbon\Carbon;
 
 class Purchase extends Model
@@ -25,11 +26,16 @@ class Purchase extends Model
 
     protected $casts = [
         'purchase_date' => 'datetime',
-        'due_date' => 'datetime',
-        'status' => PurchaseSaleStatus::class,
+        'due_date'      => 'datetime',
+        'status'        => PurchaseSaleStatus::class,
         'payment_status' => PurchaseSalePaymentStatus::class,
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
@@ -44,6 +50,12 @@ class Purchase extends Model
     {
         return $this->morphMany(StockTransaction::class, 'transactionable');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Business Logic
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Check if purchase is pending.
@@ -74,11 +86,9 @@ class Purchase extends Model
      */
     public function isPaymentOverdue(): bool
     {
-        if (!$this->due_date instanceof Carbon) {
-            return false;
-        }
-
-        return $this->due_date->isPast() && !$this->isPaid();
+        return $this->due_date instanceof Carbon
+            && $this->due_date->isPast()
+            && !$this->isPaid();
     }
 
     public function calculateTotals(): void
@@ -109,12 +119,14 @@ class Purchase extends Model
 
         $this->update(['status' => PurchaseSaleStatus::COMPLETED]);
 
-        foreach ($this->items as $item) {
-            $this->stockTransactions()->create([
-                'stock_id'   => $item->product->stock->id,
-                'quantity'   => $item->quantity,
-                'type'       => 'purchase',
-            ]);
+        foreach ($this->items()->with('product.stock')->get() as $item) {
+            if ($item->product && $item->product->stock) {
+                $this->stockTransactions()->create([
+                    'stock_id' => $item->product->stock->id,
+                    'quantity' => $item->quantity,
+                    'type'     => TransactionType::PURCHASE,
+                ]);
+            }
         }
     }
 
@@ -150,7 +162,7 @@ class Purchase extends Model
             ->where('payment_status', '!=', PurchaseSalePaymentStatus::PAID);
     }
 
-    /**
+     /**
      * Scope to get only fully paid purchases.
      */
     public function scopePaid($query)
