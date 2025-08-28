@@ -2,13 +2,12 @@
 
 namespace App\Enums;
 
-enum PurchaseSaleStatus: string
+enum TransactionStatus: string
 {
-
     case PENDING = "pending";
     case ORDERED   = "ordered";
     case COMPLETED = "completed";
-    case CANCELED = "cancelled";
+    case CANCELLED = "cancelled";
 
     /**
      * Returns all statuses with human-readable labels for forms/dropdowns.
@@ -19,7 +18,7 @@ enum PurchaseSaleStatus: string
             self::PENDING->value => 'Pending',
             self::ORDERED->value => 'Ordered',
             self::COMPLETED->value => 'Completed',
-            self::CANCELED->value => 'Cancelled',
+            self::CANCELLED->value => 'Cancelled',
         ];
     }
 
@@ -28,6 +27,6 @@ enum PurchaseSaleStatus: string
      */
     public static function values(): array
     {
-        return array_map(fn(PurchaseSaleStatus $status) => $status->value, self::cases());
+        return array_map(fn(TransactionStatus $status) => $status->value, self::cases());
     }
 }

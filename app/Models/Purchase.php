@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\PurchaseSalePaymentStatus;
-use App\Enums\PurchaseSaleStatus;
+use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use Carbon\Carbon;
 
@@ -27,7 +27,7 @@ class Purchase extends Model
     protected $casts = [
         'purchase_date' => 'datetime',
         'due_date'      => 'datetime',
-        'status'        => PurchaseSaleStatus::class,
+        'status'        => TransactionStatus::class,
         'payment_status' => PurchaseSalePaymentStatus::class,
     ];
 
@@ -62,7 +62,7 @@ class Purchase extends Model
      */
     public function isPending(): bool
     {
-        return $this->status === PurchaseSaleStatus::PENDING;
+        return $this->status === TransactionStatus::PENDING;
     }
 
     /**
@@ -113,11 +113,11 @@ class Purchase extends Model
      */
     public function confirm(): void
     {
-        if ($this->status === PurchaseSaleStatus::COMPLETED) {
+        if ($this->status === TransactionStatus::COMPLETED) {
             return; // already confirmed
         }
 
-        $this->update(['status' => PurchaseSaleStatus::COMPLETED]);
+        $this->update(['status' => TransactionStatus::COMPLETED]);
 
         foreach ($this->items()->with('product.stock')->get() as $item) {
             if ($item->product && $item->product->stock) {
@@ -141,7 +141,7 @@ class Purchase extends Model
      */
     public function scopePending($query)
     {
-        return $query->where('status', PurchaseSaleStatus::PENDING);
+        return $query->where('status', TransactionStatus::PENDING);
     }
 
     /**
@@ -149,7 +149,7 @@ class Purchase extends Model
      */
     public function scopeCompleted($query)
     {
-        return $query->where('status', PurchaseSaleStatus::COMPLETED);
+        return $query->where('status', TransactionStatus::COMPLETED);
     }
 
     /**
@@ -162,7 +162,7 @@ class Purchase extends Model
             ->where('payment_status', '!=', PurchaseSalePaymentStatus::PAID);
     }
 
-     /**
+    /**
      * Scope to get only fully paid purchases.
      */
     public function scopePaid($query)

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PurchaseSaleStatus;
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,7 +23,7 @@ class CustomerOrder extends Model
     protected $casts = [
         'order_date'    => 'datetime',
         'expected_date' => 'datetime',
-        'status'        => PurchaseSaleStatus::class,
+        'status'        => TransactionStatus::class,
     ];
 
     /*
@@ -54,16 +54,16 @@ class CustomerOrder extends Model
 
     public function confirm(): void
     {
-        if ($this->status !== PurchaseSaleStatus::PENDING) {
+        if ($this->status !== TransactionStatus::PENDING) {
             return;
         }
 
-        $this->update(['status' => PurchaseSaleStatus::COMPLETED]);
+        $this->update(['status' => TransactionStatus::COMPLETED]);
     }
 
     public function cancel(): void
     {
-        $this->update(['status' => PurchaseSaleStatus::CANCELLED]);
+        $this->update(['status' => TransactionStatus::CANCELLED]);
     }
 
     /*
@@ -92,11 +92,11 @@ class CustomerOrder extends Model
     */
     public function scopePending($query)
     {
-        return $query->where('status', PurchaseSaleStatus::PENDING);
+        return $query->where('status', TransactionStatus::PENDING);
     }
 
     public function scopeCompleted($query)
     {
-        return $query->where('status', PurchaseSaleStatus::COMPLETED);
+        return $query->where('status', TransactionStatus::COMPLETED);
     }
 }

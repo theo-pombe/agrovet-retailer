@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\PurchaseSalePaymentStatus;
-use App\Enums\PurchaseSaleStatus;
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->date('purchase_date')->useCurrent();
             $table->decimal('total_amount', 15, 2)->default(0);
-            $table->enum('status', PurchaseSaleStatus::values())
-                ->default(PurchaseSaleStatus::PENDING->value);
+            $table->enum('status', TransactionStatus::values())
+                ->default(TransactionStatus::PENDING->value);
             $table->enum('payment_status', PurchaseSalePaymentStatus::values())
                 ->default(PurchaseSalePaymentStatus::UNPAID->value);
             $table->decimal('amount_paid', 15, 2)->default(0.00);

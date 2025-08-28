@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PurchaseSalePaymentStatus;
-use App\Enums\PurchaseSaleStatus;
+use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,7 @@ class Sale extends Model
     protected $casts = [
         'sale_date'      => 'datetime',
         'due_date'       => 'datetime',
-        'status'         => PurchaseSaleStatus::class,
+        'status'         => TransactionStatus::class,
         'payment_status' => PurchaseSalePaymentStatus::class,
     ];
 
@@ -62,7 +62,7 @@ class Sale extends Model
      */
     public function isPending(): bool
     {
-        return $this->status === PurchaseSaleStatus::PENDING;
+        return $this->status === TransactionStatus::PENDING;
     }
 
     /**
@@ -123,11 +123,11 @@ class Sale extends Model
      */
     public function confirm(): void
     {
-        if ($this->status === PurchaseSaleStatus::COMPLETED) {
+        if ($this->status === TransactionStatus::COMPLETED) {
             return; // already confirmed
         }
 
-        $this->update(['status' => PurchaseSaleStatus::COMPLETED]);
+        $this->update(['status' => TransactionStatus::COMPLETED]);
 
         foreach ($this->items as $item) {
             if ($item->product && $item->product->stock) {
@@ -148,12 +148,12 @@ class Sale extends Model
 
     public function scopePending($query)
     {
-        return $query->where('status', PurchaseSaleStatus::PENDING);
+        return $query->where('status', TransactionStatus::PENDING);
     }
 
     public function scopeCompleted($query)
     {
-        return $query->where('status', PurchaseSaleStatus::COMPLETED);
+        return $query->where('status', TransactionStatus::COMPLETED);
     }
 
     public function scopeOverdue($query)
