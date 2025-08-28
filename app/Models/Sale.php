@@ -46,6 +46,11 @@ class Sale extends Model
         return $this->hasMany(SaleItem::class);
     }
 
+    public function customerOrder()
+    {
+        return $this->belongsTo(CustomerOrder::class, 'order_id');
+    }
+
     public function stockTransactions()
     {
         return $this->morphMany(StockTransaction::class, 'transactionable');
