@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\TransactionStatus;
+use Illuminate\Support\Facades\DB;
 
 class SupplierOrder extends Model
 {
@@ -41,6 +43,11 @@ class SupplierOrder extends Model
         return $this->hasMany(SupplierOrderItem::class);
     }
 
+    public function purchase()
+    {
+        return $this->hasOne(Purchase::class, 'order_id'); // add order_id in purchases table
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Business Logic
@@ -65,6 +72,43 @@ class SupplierOrder extends Model
     {
         $this->update(['status' => TransactionStatus::CANCELLED]);
     }
+
+    public function convertToPurchase(bool $autoConfirm = false): Purchase
+    {
+        return DB::transaction(function () use ($autoConfirm) {
+            // Create Purchase record
+            $purchase = Purchase::create([
+                'supplier_id'   => $this->supplier_id,
+                'purchase_date' => now(),
+                'total_amount'  => 0, // will calculate after adding items
+                'status'        => TransactionStatus::PENDING,
+                'payment_status' => PaymentStatus::UNPAID,
+                'due_date'      => $this->due_date,
+                'notes'         => $this->notes,
+            ]);
+
+            // Copy items
+            foreach ($this->items as $orderItem) {
+                $purchase->items()->create([
+                    'product_id' => $orderItem->product_id,
+                    'quantity'   => $orderItem->quantity,
+                    'unit_price' => $orderItem->unit_price,
+                    'subtotal'   => $orderItem->quantity * $orderItem->unit_price,
+                ]);
+            }
+
+            // Recalculate totals
+            $purchase->calculateTotals();
+
+            // Optionally confirm immediately (trigger stock transactions)
+            if ($autoConfirm) {
+                $purchase->confirm();
+            }
+
+            return $purchase;
+        });
+    }
+
 
     /*
     |--------------------------------------------------------------------------

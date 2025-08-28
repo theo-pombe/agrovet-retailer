@@ -46,6 +46,11 @@ class Purchase extends Model
         return $this->hasMany(PurchaseItem::class);
     }
 
+    public function supplierOrder()
+    {
+        return $this->belongsTo(SupplierOrder::class, 'order_id');
+    }
+
     public function stockTransactions()
     {
         return $this->morphMany(StockTransaction::class, 'transactionable');
