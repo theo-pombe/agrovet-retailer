@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('customer_orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_number')->nullable();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->dateTime('order_date')->default(now());
             $table->decimal('total_amount', 15, 2)->default(0);
@@ -23,6 +24,16 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('customer_order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('customer_order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
+            $table->decimal('unit_price', 15, 2);
+            $table->decimal('subtotal', 15, 2);
+            $table->timestamps();
+        });
     }
 
 
@@ -31,6 +42,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('customer_order_items');
         Schema::dropIfExists('customer_orders');
     }
 };
