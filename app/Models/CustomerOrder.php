@@ -36,11 +36,22 @@ class CustomerOrder extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(CustomerOrderItem::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Business Logic
     |--------------------------------------------------------------------------
     */
+    public function calculateTotals(): void
+    {
+        $total = $this->items()->sum('subtotal');
+        $this->update(['total_amount' => $total]);
+    }
+
     public function confirm(): void
     {
         if ($this->status !== PurchaseSaleStatus::PENDING) {
