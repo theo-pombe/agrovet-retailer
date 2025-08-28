@@ -24,13 +24,25 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('supplier_order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('supplier_order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
+            $table->decimal('unit_price', 15, 2);
+            $table->decimal('subtotal', 15, 2);
+            $table->timestamps();
+        });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
+        Schema::dropIfExists('supplier_order_items');
         Schema::dropIfExists('supplier_orders');
     }
 };
