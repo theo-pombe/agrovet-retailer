@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PurchaseSalePaymentStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\TransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,8 +20,8 @@ return new class extends Migration
             $table->decimal('total_amount', 15, 2)->default(0);
             $table->enum('status', TransactionStatus::values())
                 ->default(TransactionStatus::PENDING->value);
-            $table->enum('payment_status', PurchaseSalePaymentStatus::values())
-                ->default(PurchaseSalePaymentStatus::UNPAID->value);
+            $table->enum('payment_status', PaymentStatus::values())
+                ->default(PaymentStatus::UNPAID->value);
             $table->decimal('amount_paid', 15, 2)->default(0.00);
             $table->date('due_date')->nullable();
             $table->text('notes')->nullable();

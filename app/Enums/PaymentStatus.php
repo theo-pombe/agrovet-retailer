@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PurchaseSalePaymentStatus: string
+enum PaymentStatus: string
 {
     case UNPAID = 'unpaid';
     case PARTIAL = 'partial';
@@ -25,6 +25,6 @@ enum PurchaseSalePaymentStatus: string
      */
     public static function values(): array
     {
-        return array_map(fn(PurchaseSalePaymentStatus $status) => $status->value, self::cases());
+        return array_map(fn(PaymentStatus $status) => $status->value, self::cases());
     }
 }

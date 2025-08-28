@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PurchaseSalePaymentStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use Carbon\Carbon;
@@ -28,7 +28,7 @@ class Sale extends Model
         'sale_date'      => 'datetime',
         'due_date'       => 'datetime',
         'status'         => TransactionStatus::class,
-        'payment_status' => PurchaseSalePaymentStatus::class,
+        'payment_status' => PaymentStatus::class,
     ];
 
     /*
@@ -70,7 +70,7 @@ class Sale extends Model
      */
     public function isPaid(): bool
     {
-        return $this->payment_status === PurchaseSalePaymentStatus::PAID;
+        return $this->payment_status === PaymentStatus::PAID;
     }
 
     /**
@@ -112,9 +112,9 @@ class Sale extends Model
         $this->refresh(); // Ensure fresh values after increment
 
         if ($this->amount_paid >= $this->total_amount) {
-            $this->update(['payment_status' => PurchaseSalePaymentStatus::PAID]);
+            $this->update(['payment_status' => PaymentStatus::PAID]);
         } elseif ($this->amount_paid > 0) {
-            $this->update(['payment_status' => PurchaseSalePaymentStatus::PARTIAL]);
+            $this->update(['payment_status' => PaymentStatus::PARTIAL]);
         }
     }
 
@@ -160,11 +160,11 @@ class Sale extends Model
     {
         return $query
             ->where('due_date', '<', now())
-            ->where('payment_status', '!=', PurchaseSalePaymentStatus::PAID);
+            ->where('payment_status', '!=', PaymentStatus::PAID);
     }
 
     public function scopePaid($query)
     {
-        return $query->where('payment_status', PurchaseSalePaymentStatus::PAID);
+        return $query->where('payment_status', PaymentStatus::PAID);
     }
 }
