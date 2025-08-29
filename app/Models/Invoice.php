@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Invoice extends Model
 {
@@ -33,6 +34,11 @@ class Invoice extends Model
     public function invoiceable()
     {
         return $this->morphTo();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 
 
@@ -73,5 +79,22 @@ class Invoice extends Model
         }
 
         $this->saveQuietly();
+    }
+
+    public function recordPayment(float $amount, ?string $method = null, ?string $notes = null): Payment
+    {
+        return DB::transaction(function () use ($amount, $method, $notes) {
+            $payment = $this->payments()->create([
+                'amount' => $amount,
+                'payment_date' => now(),
+                'payment_method' => $method,
+                'notes' => $notes,
+            ]);
+
+            $this->amount_paid += $amount;
+            $this->calculateStatus();
+
+            return $payment;
+        });
     }
 }

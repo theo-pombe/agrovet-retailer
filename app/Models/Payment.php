@@ -19,4 +19,14 @@ class Payment extends Model
         'payment_date' => 'datetime',
         'payment_method' => PaymentMethod::class,
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
 }
