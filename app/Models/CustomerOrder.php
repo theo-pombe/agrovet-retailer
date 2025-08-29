@@ -121,7 +121,7 @@ class CustomerOrder extends Model
             if (empty($order->order_number)) {
                 // Example format: CORD-20250827-0001
                 $prefix = 'CORD-' . now()->format('Ymd');
-                $latestNumber = static::whereDate('created_at', today())
+                $latestNumber = static::query()->whereDate('created_at', today())
                     ->max('id') ?? 0;
 
                 $order->order_number = $prefix . '-' . str_pad($latestNumber + 1, 4, '0', STR_PAD_LEFT);
