@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('supplier_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('order_number')->nullable();
+            $table->string('order_number')->unique();
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->dateTime('order_date')->default(now());
             $table->decimal('total_amount', 15, 2)->default(0);

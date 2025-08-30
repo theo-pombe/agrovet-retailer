@@ -14,11 +14,12 @@ return new class extends Migration
     {
         Schema::create('customer_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('order_number')->nullable();
+            $table->string('order_number')->unique();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->dateTime('order_date')->default(now());
             $table->decimal('total_amount', 15, 2)->default(0);
-            $table->enum('status', TransactionStatus::values())->default(TransactionStatus::PENDING->value);
+            $table->enum('status', TransactionStatus::values())
+                ->default(TransactionStatus::PENDING->value)->index();
             $table->date('expected_date')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
