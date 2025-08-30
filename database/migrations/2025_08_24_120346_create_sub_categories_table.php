@@ -15,11 +15,11 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('description')->nullable();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
-            $table->softDeletes();
 
             $table->unique(['category_id', 'name']);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

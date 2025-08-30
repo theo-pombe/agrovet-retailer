@@ -21,11 +21,11 @@ return new class extends Migration
             $table->decimal('purchasing_price', 12, 2);
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->nullOnDelete();
-            $table->softDeletes();
 
             $table->unique(['category_id', 'sub_category_id', 'name']);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
