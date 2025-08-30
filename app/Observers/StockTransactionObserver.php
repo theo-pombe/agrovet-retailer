@@ -54,6 +54,7 @@ class StockTransactionObserver
         }
 
         $qty = $quantityOverride ?? $transaction->quantity;
+        $operation = null;
 
         switch ($transaction->type) {
             case TransactionType::PURCHASE:
@@ -67,9 +68,11 @@ class StockTransactionObserver
                 break;
 
             default:
-                return;
+                return; // No valid operation for this transaction type
         }
 
-        $stock->{$operation}('stock_level', $qty);
+        if ($operation) {
+            $stock->{$operation}('stock_level', $qty);
+        }
     }
 }
