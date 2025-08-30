@@ -14,7 +14,7 @@ class Stock extends Model
     protected $fillable = [
         'product_id',
         'stock_level',
-        're_order_level',
+        'minimum_stock_level',
         'status',
     ];
 
@@ -34,7 +34,7 @@ class Stock extends Model
 
     public function isBelowReorderLevel(): bool
     {
-        return $this->stock_level <= $this->re_order_level;
+        return $this->stock_level <= $this->minimum_stock_level;
     }
 
     public function scopeActive($query)
