@@ -21,12 +21,26 @@ class Payment extends Model
     ];
 
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Relationships
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    /*
+    |----------------------------------------------------------------------
+    | Helper Methods
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Update the invoice status after payment is recorded
+     */
+    public function updateInvoiceStatus(): void
+    {
+        $this->invoice->calculateStatus(); // Recalculate invoice status after payment
     }
 }
