@@ -13,15 +13,18 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('sku')->unique();
             $table->text('description')->nullable();
-            $table->string('unit'); // e.g., pcs, kg, box
-            $table->decimal('selling_price', 10, 2);
-            $table->decimal('purchasing_price', 10, 2);
+            $table->foreignId('unit_id')->constrained('units')->cascadeOnDelete();
+            $table->decimal('selling_price', 12, 2);
+            $table->decimal('purchasing_price', 12, 2);
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->foreignId('subcategory_id')->nullable()->constrained('sub_categories')->nullOnDelete();
+            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->nullOnDelete();
             $table->softDeletes();
+
+            $table->unique(['category_id', 'sub_category_id', 'name']);
+
             $table->timestamps();
         });
     }

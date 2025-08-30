@@ -13,13 +13,18 @@ class Product extends Model
     protected $fillable = [
         'name',
         'sku',
-        'unit',
+        'unit_id',
         'category_id',
-        'subcategory_id',
+        'sub_category_id',
         'description',
         'selling_price',
         'purchasing_price',
     ];
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
 
     public function category()
     {
@@ -43,7 +48,7 @@ class Product extends Model
 
     public static function selectProducts($categoryId = null, $subcategoryId = null, $withSku = true): array
     {
-        $data = ['' => 'Select product'];
+        $data = [];
 
         $query = self::query()->orderBy('name');
 
@@ -51,7 +56,7 @@ class Product extends Model
             $query->where('category_id', $categoryId);
 
         if ($subcategoryId)
-            $query->where('subcategory_id', $subcategoryId);
+            $query->where('sub_category_id', $subcategoryId);
 
         $query->get()->each(function ($item) use (&$data, $withSku) {
             $label = $item->formatted_name;
