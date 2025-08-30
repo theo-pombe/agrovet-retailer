@@ -70,15 +70,21 @@ class Invoice extends Model
 
     public function calculateStatus(): void
     {
+        $newStatus = $this->status;
+
         if ($this->amount_paid >= $this->total_amount) {
-            $this->status = PaymentStatus::PAID;
+            $newStatus = PaymentStatus::PAID;
         } elseif ($this->amount_paid > 0) {
-            $this->status = PaymentStatus::PARTIAL;
+            $newStatus = PaymentStatus::PARTIAL;
         } else {
-            $this->status = PaymentStatus::UNPAID;
+            $newStatus = PaymentStatus::UNPAID;
         }
 
-        $this->saveQuietly();
+        // Only update the status if it has changed
+        if ($this->status !== $newStatus) {
+            $this->status = $newStatus;
+            $this->saveQuietly();
+        }
     }
 
     public function recordPayment(float $amount, ?string $method = null, ?string $notes = null): Payment
