@@ -67,6 +67,11 @@ class Unit extends Model
         return "{$this->formatted_name} ({$this->formatted_symbol})";
     }
 
+    public function getFractionalTextAttribute(): string
+    {
+        return $this->is_fractional ? 'Yes' : 'No';
+    }
+
     /**
      * Returns an array suitable for dropdowns or selects.
      */
