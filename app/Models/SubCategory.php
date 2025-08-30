@@ -41,7 +41,7 @@ class SubCategory extends Model
 
     public static function selectSubCategories($categoryId = null): array
     {
-        $data = ['' => 'Select subcategory'];
+        $data = [];
 
         $query = self::query()->orderBy('name');
         if ($categoryId) {

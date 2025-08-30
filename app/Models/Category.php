@@ -39,7 +39,7 @@ class Category extends Model
 
     public static function selectCategories(): array
     {
-        $data = ['' => 'Select category'];
+        $data = [];
 
         self::query()->orderBy('name')->get()->each(function ($item) use (&$data) {
             $data[$item->id] = $item->formatted_name;
