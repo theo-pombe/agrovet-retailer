@@ -12,12 +12,12 @@ return new class extends Migration {
     {
         Schema::create('sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 100);
             $table->string('description')->nullable();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
 
-            $table->unique(['category_id', 'name'], 'subcategories_category_id_name_unique');
+            $table->unique(['category_id', 'name']);
 
             $table->timestamps();
         });
