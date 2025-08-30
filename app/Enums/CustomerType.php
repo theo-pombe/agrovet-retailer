@@ -7,6 +7,9 @@ enum CustomerType: string
     case INDIVIDUAL = 'individual';
     case ORGANIZATION = 'organization';
 
+    /**
+     * Labels for dropdowns/forms.
+     */
     public static function labels(): array
     {
         return [
@@ -15,6 +18,9 @@ enum CustomerType: string
         ];
     }
 
+    /**
+     * Raw string values (for migrations / validation).
+     */
     public static function values(): array
     {
         return array_map(fn($type) => $type->value, self::cases());

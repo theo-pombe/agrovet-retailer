@@ -31,6 +31,16 @@ class Customer extends Model
         'status' => Status::class,
     ];
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Dynamically resolve customer display name.
+     */
     public function getDisplayNameAttribute(): string
     {
         if ($this->type === CustomerType::ORGANIZATION) {
@@ -40,13 +50,37 @@ class Customer extends Model
         return $this->full_name;
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+    public function scopeSelectable($query)
+    {
+        return $query->whereIn('status', Status::customerStatusValues());
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', Status::ACTIVE->value);
+    }
+
+    public function scopeVip($query)
+    {
+        return $query->where('status', Status::VIP->value);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utility
+    |--------------------------------------------------------------------------
+    */
     public static function selectCustomers(): array
     {
         return self::query()
-            ->whereIn('status', [
-                Status::ACTIVE->value,
-                Status::VIP->value,
-            ])
+            ->whereIn('status', Status::customerStatusValues())
             ->orderBy('type')
             ->orderBy('full_name')
             ->orderBy('company_name')

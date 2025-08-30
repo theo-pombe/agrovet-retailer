@@ -25,6 +25,43 @@ class Supplier extends Model
         'status' => Status::class,
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Scope suppliers that are allowed to be selectable
+     * (active or preferred).
+     */
+    public function scopeSelectable($query)
+    {
+        return $query->whereIn('status', Status::supplierStatusValues());
+    }
+
+    /**
+     * Scope only active suppliers.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', Status::ACTIVE->value);
+    }
+
+    /**
+     * Scope only preferred suppliers.
+     */
+    public function scopePreferred($query)
+    {
+        return $query->where('status', Status::PREFERRED->value);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utility
+    |--------------------------------------------------------------------------
+    */
+
     public static function selectSuppliers(): array
     {
         return self::query()
