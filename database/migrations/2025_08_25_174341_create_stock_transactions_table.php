@@ -33,7 +33,7 @@ return new class extends Migration
             // General
             $table->morphs('transactionable');
             $table->date('transacted_date')->useCurrent();
-            $table->enum('status', array_map(fn($s) => $s->value, Status::generalStatuses()))
+            $table->enum('status', Status::generalStatusValues())
                 ->default(Status::ACTIVE->value);
             $table->timestamps();
             $table->softDeletes();

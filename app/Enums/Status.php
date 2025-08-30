@@ -47,6 +47,11 @@ enum Status: string
         ];
     }
 
+    public static function generalStatusValues(): array
+    {
+        return array_map(fn(Status $s) => $s->value, self::generalStatuses());
+    }
+
     /**
      * Statuses applicable to customers.
      */
