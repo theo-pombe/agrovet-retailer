@@ -28,7 +28,7 @@ class Supplier extends Model
     public static function selectSuppliers(): array
     {
         return self::query()
-            ->whereIn('status', [Status::ACTIVE->value, Status::PREFERRED->value])
+            ->whereIn('status', Status::supplierStatusValues())
             ->orderBy('contact_person')
             ->orderBy('company_name')
             ->get()

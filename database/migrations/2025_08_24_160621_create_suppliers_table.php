@@ -14,16 +14,16 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string('contact_person');
-            $table->string('company_name')->nullable();
+            $table->string('contact_person')->index();
+            $table->string('company_name')->nullable()->index();
             $table->string('phone')->unique();
             $table->string('email')->nullable();
             $table->text('address')->nullable();
             $table->text('notes')->nullable();
-            $table->enum('status', array_map(fn($s) => $s->value, Status::supplierStatuses()))
+            $table->enum('status', Status::supplierStatusValues())
                 ->default(Status::ACTIVE->value);
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

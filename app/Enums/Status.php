@@ -28,6 +28,14 @@ enum Status: string
     }
 
     /**
+     * Get the human-readable label for the current enum instance.
+     */
+    public function label(): string
+    {
+        return self::options()[$this->value];
+    }
+
+    /**
      * General statuses used across the system.
      */
     public static function generalStatuses(): array
@@ -50,6 +58,11 @@ enum Status: string
         ];
     }
 
+    public static function customerStatusValues(): array
+    {
+        return array_map(fn(Status $s) => $s->value, self::customerStatuses());
+    }
+
     /**
      * Statuses applicable to suppliers.
      */
@@ -59,6 +72,11 @@ enum Status: string
             ...self::generalStatuses(),
             self::PREFERRED,
         ];
+    }
+
+    public static function supplierStatusValues(): array
+    {
+        return array_map(fn(Status $s) => $s->value, self::supplierStatuses());
     }
 
     /**

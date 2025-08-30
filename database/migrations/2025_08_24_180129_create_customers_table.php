@@ -15,20 +15,28 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', CustomerType::values())->default(CustomerType::INDIVIDUAL->value);
+
+            $table->enum('type', CustomerType::values())
+                ->default(CustomerType::INDIVIDUAL->value);
+
             $table->string('full_name')->nullable();
             $table->string('company_name')->nullable();
             $table->string('contact_person')->nullable();
+
             $table->string('phone')->unique();
             $table->string('email')->nullable();
+
             $table->text('address')->nullable();
             $table->text('notes')->nullable();
-            $table->enum('status', array_map(fn($s) => $s->value, Status::customerStatuses()))
+
+            $table->enum('status', Status::customerStatusValues())
                 ->default(Status::ACTIVE->value);
+
             $table->decimal('total_spent', 12, 2)->default(0);
             $table->unsignedInteger('total_visits')->default(0);
-            $table->softDeletes();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
