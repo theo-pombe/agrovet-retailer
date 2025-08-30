@@ -99,8 +99,11 @@ class Purchase extends Model
     public function calculateTotals(): void
     {
         $total = $this->items()->sum('subtotal');
-        $this->update(['total_amount' => $total]);
+        if ($this->total_amount !== $total) {
+            $this->update(['total_amount' => $total]);
+        }
     }
+
 
     public function markAsPaid(float $amount): void
     {
