@@ -12,6 +12,8 @@ class StockTransaction extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public $timestamps = true;
+
     protected $fillable = [
         'stock_id',
         'type',
@@ -50,5 +52,26 @@ class StockTransaction extends Model
     public function transactionable()
     {
         return $this->morphTo();
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($transaction) {
+            $stock = $transaction->stock;
+            if ($transaction->type === TransactionType::PURCHASE) {
+                $stock->increment('stock_level', $transaction->quantity);
+            } elseif ($transaction->type === TransactionType::SALE) {
+                $stock->decrement('stock_level', $transaction->quantity);
+            }
+        });
+
+        static::deleted(function ($transaction) {
+            $stock = $transaction->stock;
+            if ($transaction->type === TransactionType::PURCHASE) {
+                $stock->decrement('stock_level', $transaction->quantity);
+            } elseif ($transaction->type === TransactionType::SALE) {
+                $stock->increment('stock_level', $transaction->quantity);
+            }
+        });
     }
 }
